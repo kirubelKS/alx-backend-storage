@@ -1,11 +1,11 @@
 //Add a new attribute to the documents in the school collections.
 // db.school.updateMany(
-    //{name: "Holberton School"},
+    //{name: "Holberton school"},
     //{$set: {address: "972 Mission Street"}}
     //);
 
     db.school.update(
-        {name:"Holberton School"},
+        {name:"Holberton school"},
         {"$set": {address: "972 Mission street"}},
         {multi: true}
     );
