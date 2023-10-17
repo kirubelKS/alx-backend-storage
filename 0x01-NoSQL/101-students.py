@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-''''Where can I learn python?'''
+''''shows the Top Students in a collection sorted by an average score.'''
 
 def top_students(mongo_collection):
     '''Print all the students in a collection sorted by average score.'''
