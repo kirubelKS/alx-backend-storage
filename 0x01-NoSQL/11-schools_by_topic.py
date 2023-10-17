@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
-'''Where can I learn Python?'''
+'''Task 11's module.
+'''
 
-def school_by_topic(mongo_collection, topic):
-    '''Returns the list of students having a specific topics.'''
+
+def schools_by_topic(mongo_collection, topic):
+    '''Returns the list of school having a specific topic.
+    '''
     topic_filter = {
         'topics': {
             '$elemMatch': {
