@@ -15,7 +15,7 @@ def count_calls(method: Callable) -> Callable:
     def invoker(self, *args, **kwargs) -> Any:
         '''Invokes the give method after incrementing its call counter.'''
         if isinstance(self._redis, redis.Redis):
-            self._redis.incr(method.__fullname__)
+            self._redis.incr(method.__qualname__)
         return method(self, *args, **kwargs) 
     return invoker
 
@@ -25,8 +25,8 @@ def call_history(method: Callable) -> Callable:
     @wraps(method)
     def invoker(self, *args, **kwargs) -> Any:
         '''returns the method's output after storing its inputs and outputs.'''
-        in_key = '{}:inputs'.format(method.__fullname__)
-        out_key = '{}:outputs'.format(method.__fullname__)
+        in_key = '{}:inputs'.format(method.__qualname__)
+        out_key = '{}:outputs'.format(method.__qualname__)
         if isinstance(self._redis, redis.Redis):
             self._redis.rpush(in_key, str(args))
             output = method(self, *args, **kwargs)
@@ -43,7 +43,7 @@ def replay(fn: Callable) -> None:
     redis_store = getattr(fn.__self__, 'redis', None)
     if not isinstance(redis_store, redis.Redis):
         return
-    fxn_name = fn.__fullname__
+    fxn_name = fn.__qualname__
     in_key = '{}:inputs'.format(fxn_name)
     out_key = '{}:outputs'.format(fxn_name)
     fxn_call_count = 0
