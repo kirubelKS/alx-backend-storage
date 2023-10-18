@@ -10,7 +10,7 @@ from typing import Any, Callable, Union
 def count_calls(method: Callable) -> Callable:
     '''follow ups the number of calls mafe to a method in a cache class.'''
     @wraps(method)
-    def invoker(self, *arg, **kwargs) -> Any:
+    def invoker(self, *args, **kwargs) -> Any:
         '''Invokes the give method after incrementing its call counter.'''
         if isinstance(self._redis, redis.Redis):
             self._redis.incr(method.__qualname__)
@@ -34,16 +34,16 @@ def call_history(method: Callable) -> Callable:
     
 def replay(fn: Callable) -> None:
     '''shows the call history of a cache classs method.'''
-    if fn is None or hasattr(fn, '__slef__'):
+    if fn is None or not hasattr(fn, '__self__'):
         return
-    redis_store =getattr(fn.__self__, 'redis', None)
+    redis_store = getattr(fn.__self__, 'redis', None)
     if not isinstance(redis_store, redis.Redis):
         return
     fxn_name = fn.__qualname__
     in_key = '{}:inputs'.format(fxn_name)
-    out_key = '{}:output'.format(fxn_name)
+    out_key = '{}:outputs'.format(fxn_name)
     fxn_call_count = 0
-    if redis_store.exists(fxn_name) !=0:
+    if redis_store.exists(fxn_name) != 0:
         fxn_call_count = int(redis_store.get(fxn_name))
     print('{} was called {} times:'.format(fxn_name, fxn_call_count))
     fxn_inputs = redis_store.lrange(in_key, 0, -1)
@@ -68,11 +68,11 @@ class Cache:
     @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         '''Stores a value in a Redis data storage and returns the key.'''
-        data_key = str(uuid.uuid())
+        data_key = str(uuid.uuid4())
         self._redis.set(data_key, data)
         return data_key
 
-    def get (
+    def get(
             self,
             key: str,
             fn: Callable = None,
